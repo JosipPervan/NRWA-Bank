@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officer CRUD Aplikacija</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Officer CRUD Aplikacija</h1>
+        
+        <!-- Forma za kreiranje/ažuriranje -->
+        <form id="officerForm" class="mb-4">
+            <input type="hidden" id="officerId">
+            <div class="mb-3">
+                <label for="firstName" class="form-label">Ime</label>
+                <input type="text" class="form-control" id="firstName" required>
+            </div>
+            <div class="mb-3">
+                <label for="lastName" class="form-label">Prezime</label>
+                <input type="text" class="form-control" id="lastName" required>
+            </div>
+            <div class="mb-3">
+                <label for="startDate" class="form-label">Datum početka</label>
+                <input type="date" class="form-control" id="startDate" required>
+            </div>
+            <div class="mb-3">
+                <label for="endDate" class="form-label">Datum završetka</label>
+                <input type="date" class="form-control" id="endDate">
+            </div>
+            <div class="mb-3">
+                <label for="title" class="form-label">Titula</label>
+                <input type="text" class="form-control" id="title" required>
+            </div>
+            <div class="mb-3">
+                <label for="custId" class="form-label">ID kupca</label>
+                <input type="number" class="form-control" id="custId">
+            </div>
+            <button type="submit" class="btn btn-primary">Spremi</button>
+            <button type="button" class="btn btn-secondary" id="cancelBtn">Odustani</button>
+        </form>
+
+        <!-- Tablica za prikaz officera -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Ime</th>
+                    <th>Prezime</th>
+                    <th>Datum početka</th>
+                    <th>Datum završetka</th>
+                    <th>Titula</th>
+                    <th>ID kupca</th>
+                    <th>Akcije</th>
+                </tr>
+            </thead>
+            <tbody id="officerTableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- jQuery i Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Vaš skript -->
+    <script>
+        const API_URL = 'http://127.0.0.1:8000/api/officer';
+        const officerForm = $('#officerForm');
+        const officerTableBody = $('#officerTableBody');
+        const cancelBtn = $('#cancelBtn');
+
+        // Učitaj officere pri učitavanju stranice
+        $(document).ready(loadOfficers);
+
+        // Event listener za formu
+        officerForm.on('submit', handleFormSubmit);
+
+        // Event listener za gumb odustani
+        cancelBtn.on('click', resetForm);
+
+        function loadOfficers() {
+            $.ajax({
+                url: API_URL,
+                method: 'GET',
+                success: function(officers) {
+                    displayOfficers(officers);
+                },
+                error: function() {
+                    console.error('Greška pri dohvaćanju officera');
+                }
+            });
+        }
+
+        function displayOfficers(officers) {
+            officerTableBody.empty();
+            officers.forEach(officer => {
+                const row = `
+                    <tr>
+                        <td>${officer.OFFICER_ID}</td>
+                        <td>${officer.FIRST_NAME}</td>
+                        <td>${officer.LAST_NAME}</td>
+                        <td>${officer.START_DATE}</td>
+                        <td>${officer.END_DATE || ''}</td>
+                        <td>${officer.TITLE}</td>
+                        <td>${officer.CUST_ID || ''}</td>
+                        <td>
+                            <button onclick="editOfficer(${officer.OFFICER_ID})" class="btn btn-sm btn-warning">Uredi</button>
+                            <button onclick="deleteOfficer(${officer.OFFICER_ID})" class="btn btn-sm btn-danger">Obriši</button>
+                        </td>
+                    </tr>
+					
+                `;
+                officerTableBody.append(row);
+            });
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const officerId = $('#officerId').val();
+            const officer = {
+                FIRST_NAME: $('#firstName').val(),
+                LAST_NAME: $('#lastName').val(),
+                START_DATE: $('#startDate').val(),
+                END_DATE: $('#endDate').val() || null,
+                TITLE: $('#title').val(),
+                CUST_ID: $('#custId').val() || null
+            };
+
+            console.log('Officer data:', officer);
+
+            const ajaxOptions = {
+                url: officerId ? `${API_URL}/${officerId}` : API_URL,
+                method: officerId ? 'PUT' : 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(officer),
+                success: function(response) {
+                    console.log('Response:', response);
+                    alert('Officer uspješno spremljen!');
+                    loadOfficers();
+                    resetForm();
+                },
+               		error: function(xhr, status, error) {
+    console.error('Greška pri spremanju officera:', error);
+    console.error('Status:', status);
+    console.error('Response:', xhr.responseText);
+    alert('Došlo je do greške pri spremanju officera. Molimo pokušajte ponovno.');
+}
+            };
+
+            $.ajax(ajaxOptions);
+        }
+
+        function editOfficer(id) {
+            $.ajax({
+                url: `${API_URL}/${id}`,
+                method: 'GET',
+                success: function(officer) {
+                    $('#officerId').val(officer.OFFICER_ID);
+                    $('#firstName').val(officer.FIRST_NAME);
+                    $('#lastName').val(officer.LAST_NAME);
+                    $('#startDate').val(officer.START_DATE);
+                    $('#endDate').val(officer.END_DATE || '');
+                    $('#title').val(officer.TITLE);
+                    $('#custId').val(officer.CUST_ID || '');
+                },
+                error: function() {
+                    console.error('Greška pri dohvaćanju officera za uređivanje');
+                }
+            });
+        }
+
+        function deleteOfficer(id) {
+            if (confirm('Jeste li sigurni da želite obrisati ovog officera?')) {
+                $.ajax({
+                    url: `${API_URL}/${id}`,
+                    method: 'DELETE',
+                    success: function() {
+                        loadOfficers();
+                    },
+                    error: function() {
+                        console.error('Greška pri brisanju officera');
+                    }
+                });
+            }
+        }
+
+        function resetForm() {
+            officerForm[0].reset();
+            $('#officerId').val('');
+        }
+		
+
+
+    </script>
+</body>
+</html>

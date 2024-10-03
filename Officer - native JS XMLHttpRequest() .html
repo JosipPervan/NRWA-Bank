@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officer CRUD Aplikacija</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Officer CRUD Aplikacija</h1>
+        
+        <!-- Forma za kreiranje/ažuriranje -->
+        <form id="officerForm" class="mb-4">
+            <input type="hidden" id="officerId">
+            <div class="mb-3">
+                <label for="firstName" class="form-label">Ime</label>
+                <input type="text" class="form-control" id="firstName" required>
+            </div>
+            <div class="mb-3">
+                <label for="lastName" class="form-label">Prezime</label>
+                <input type="text" class="form-control" id="lastName" required>
+            </div>
+            <div class="mb-3">
+                <label for="startDate" class="form-label">Datum početka</label>
+                <input type="date" class="form-control" id="startDate" required>
+            </div>
+            <div class="mb-3">
+                <label for="endDate" class="form-label">Datum završetka</label>
+                <input type="date" class="form-control" id="endDate">
+            </div>
+            <div class="mb-3">
+                <label for="title" class="form-label">Titula</label>
+                <input type="text" class="form-control" id="title" required>
+            </div>
+            <div class="mb-3">
+                <label for="custId" class="form-label">ID kupca</label>
+                <input type="number" class="form-control" id="custId">
+            </div>
+            <button type="submit" class="btn btn-primary">Spremi</button>
+            <button type="button" class="btn btn-secondary" id="cancelBtn">Odustani</button>
+        </form>
+
+        <!-- Tablica za prikaz officera -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Ime</th>
+                    <th>Prezime</th>
+                    <th>Datum početka</th>
+                    <th>Datum završetka</th>
+                    <th>Titula</th>
+                    <th>ID kupca</th>
+                    <th>Akcije</th>
+                </tr>
+            </thead>
+            <tbody id="officerTableBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:8000/api/officer';
+        const officerForm = document.getElementById('officerForm');
+        const officerTableBody = document.getElementById('officerTableBody');
+        const cancelBtn = document.getElementById('cancelBtn');
+
+        // Učitaj officere pri učitavanju stranice
+        document.addEventListener('DOMContentLoaded', loadOfficers);
+
+        // Event listener za formu
+        officerForm.addEventListener('submit', handleFormSubmit);
+
+        // Event listener za gumb odustani
+        cancelBtn.addEventListener('click', resetForm);
+
+        function loadOfficers() {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', API_URL, true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const officers = JSON.parse(xhr.responseText);
+                    displayOfficers(officers);
+                } else {
+                    console.error('Greška pri dohvaćanju officera');
+                }
+            };
+            xhr.send();
+        }
+
+        function displayOfficers(officers) {
+            officerTableBody.innerHTML = '';
+            officers.forEach(officer => {
+                const row = `
+                    <tr>
+                        <td>${officer.OFFICER_ID}</td>
+                        <td>${officer.FIRST_NAME}</td>
+                        <td>${officer.LAST_NAME}</td>
+                        <td>${officer.START_DATE}</td>
+                        <td>${officer.END_DATE || ''}</td>
+                        <td>${officer.TITLE}</td>
+                        <td>${officer.CUST_ID || ''}</td>
+                        <td>
+                            <button onclick="editOfficer(${officer.OFFICER_ID})" class="btn btn-sm btn-warning">Uredi</button>
+                            <button onclick="deleteOfficer(${officer.OFFICER_ID})" class="btn btn-sm btn-danger">Obriši</button>
+                        </td>
+                    </tr>
+                `;
+                officerTableBody.innerHTML += row;
+            });
+        }
+
+       function handleFormSubmit(e) {
+    e.preventDefault();
+    const officerId = document.getElementById('officerId').value;
+    const officer = {
+        FIRST_NAME: document.getElementById('firstName').value,
+        LAST_NAME: document.getElementById('lastName').value,
+        START_DATE: document.getElementById('startDate').value,
+        END_DATE: document.getElementById('endDate').value || null,
+        TITLE: document.getElementById('title').value,
+        CUST_ID: document.getElementById('custId').value || null
+    };
+
+    console.log('Officer data:', officer);
+
+    const xhr = new XMLHttpRequest();
+    if (officerId) {
+        // Update existing officer
+        xhr.open('PUT', `${API_URL}/${officerId}`, true);
+    } else {
+        // Create new officer
+        xhr.open('POST', API_URL, true);
+    }
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    
+    xhr.onload = function() {
+        console.log('Response status:', xhr.status);
+        console.log('Response text:', xhr.responseText);
+        if (xhr.status === 200 || xhr.status === 201) {
+            alert('Officer successfully saved!');
+            loadOfficers();
+            resetForm();
+        } else {
+            console.error('Error saving officer');
+            alert('There was an error saving the officer. Please try again.');
+        }
+    };
+
+    xhr.onerror = function() {
+        console.error('Network error saving officer');
+        alert('There was a network error. Please check your internet connection and try again.');
+    };
+
+    xhr.send(JSON.stringify(officer));
+}
+
+
+        function editOfficer(id) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `${API_URL}/${id}`, true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const officer = JSON.parse(xhr.responseText);
+                    document.getElementById('officerId').value = officer.OFFICER_ID;
+                    document.getElementById('firstName').value = officer.FIRST_NAME;
+                    document.getElementById('lastName').value = officer.LAST_NAME;
+                    document.getElementById('startDate').value = officer.START_DATE;
+                    document.getElementById('endDate').value = officer.END_DATE || '';
+                    document.getElementById('title').value = officer.TITLE;
+                    document.getElementById('custId').value = officer.CUST_ID || '';
+                } else {
+                    console.error('Greška pri dohvaćanju officera za uređivanje');
+                }
+            };
+            xhr.send();
+        }
+
+        function deleteOfficer(id) {
+            if (confirm('Jeste li sigurni da želite obrisati ovog officera?')) {
+                const xhr = new XMLHttpRequest();
+                xhr.open('DELETE', `${API_URL}/${id}`, true);
+                xhr.onload = function() {
+                    if (xhr.status === 204) {
+                        loadOfficers();
+                    } else {
+                        console.error('Greška pri brisanju officera');
+                    }
+                };
+                xhr.send();
+            }
+        }
+
+        function resetForm() {
+            officerForm.reset();
+            document.getElementById('officerId').value = '';
+        }
+    </script>
+</body>
+</html>

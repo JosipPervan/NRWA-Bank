@@ -1,0 +1,584 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Bank API",
+        "description": "A description of your API.",
+        "contact": {
+            "name": "Josip",
+            "email": "josip.tomica01@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000/api",
+            "description": "Local API Server"
+        },
+        {
+            "url": "/api"
+        }
+    ],
+    "paths": {
+        "/branch": {
+            "summary": "Operations about branches",
+            "get": {
+                "tags": [
+                    "Branch"
+                ],
+                "summary": "Get a list of branches",
+                "operationId": "f687c36dd142efe3072933c55ba95194",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Branch"
+                ],
+                "summary": "Create a new branch",
+                "operationId": "24e5dc6caf270897898f9f8a181913ea",
+                "requestBody": {
+                    "description": "Branch object that needs to be added",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Branch"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Branch created successfully"
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
+        "/department": {
+            "summary": "Operations about departments",
+            "get": {
+                "tags": [
+                    "Department"
+                ],
+                "summary": "Get a list of departments",
+                "operationId": "8cac788ee75a158f9d2c3fb77608ddca",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Department"
+                ],
+                "summary": "Create a new department",
+                "operationId": "33297f25cf9e36998fd6326b0b230a49",
+                "requestBody": {
+                    "description": "Department object that needs to be added",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Department"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Department created successfully"
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
+        "/officer": {
+            "summary": "Operations about officers",
+            "get": {
+                "tags": [
+                    "Officer"
+                ],
+                "summary": "Get a list of officers",
+                "operationId": "2ea1ecfe2e44db741d88ffcab44af129",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Officer"
+                ],
+                "summary": "Create a new officer",
+                "operationId": "3b1b8afa488175e2e11a1fbe2650580e",
+                "requestBody": {
+                    "description": "Officer object that needs to be added",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Officer"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Officer created successfully"
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
+        "/branch/{id}": {
+            "get": {
+                "tags": [
+                    "Branch"
+                ],
+                "summary": "Get a branch by ID",
+                "description": "Returns a branch by its ID.",
+                "operationId": "e543d28f77737ea01461c2cbaf58bd84",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the branch",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Branch"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Branch not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Branch"
+                ],
+                "summary": "Update a branch",
+                "description": "Updates an existing branch.",
+                "operationId": "a94638e02095b8a17fe3ac55cb4248b1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the branch to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Branch"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Branch updated successfully"
+                    },
+                    "404": {
+                        "description": "Branch not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Branch"
+                ],
+                "summary": "Delete a branch",
+                "description": "Deletes a branch from the database.",
+                "operationId": "273157190035e6b4fd9d135ff7a5cf27",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the branch to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Branch deleted successfully"
+                    },
+                    "404": {
+                        "description": "Branch not found"
+                    }
+                }
+            }
+        },
+        "/department/{id}": {
+            "get": {
+                "tags": [
+                    "Department"
+                ],
+                "summary": "Get a department by ID",
+                "description": "Returns a department by its ID.",
+                "operationId": "d6dd7a2e4a31db31decf22a1a1a405d1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the department",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Department"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Department not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Department"
+                ],
+                "summary": "Update a department",
+                "description": "Updates an existing department.",
+                "operationId": "0467c83c8d218d81d6f75c8c5db40ba5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the department to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Department"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Department updated successfully"
+                    },
+                    "404": {
+                        "description": "Department not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Department"
+                ],
+                "summary": "Delete a department",
+                "description": "Deletes a department from the database.",
+                "operationId": "36472d86edbd056c542c54005c309a36",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the department to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Department deleted successfully"
+                    },
+                    "404": {
+                        "description": "Department not found"
+                    }
+                }
+            }
+        },
+        "/officer/{id}": {
+            "get": {
+                "tags": [
+                    "Officer"
+                ],
+                "summary": "Get an officer by ID",
+                "description": "Returns an officer by their ID.",
+                "operationId": "e3b66a6f7b124447309dfe8f4a21a137",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the officer",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Officer"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Officer not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Officer"
+                ],
+                "summary": "Update an officer",
+                "description": "Updates an existing officer.",
+                "operationId": "c0054fc423d52d78482c215c501de6d1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the officer to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Officer"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Officer updated successfully"
+                    },
+                    "404": {
+                        "description": "Officer not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Officer"
+                ],
+                "summary": "Delete an officer",
+                "description": "Deletes an officer from the database.",
+                "operationId": "a41feda17460fd382c217e9d539814cd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the officer to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Officer deleted successfully"
+                    },
+                    "404": {
+                        "description": "Officer not found"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Branch": {
+                "required": [
+                    "BRANCH_ID",
+                    "ADDRESS",
+                    "CITY",
+                    "NAME",
+                    "STATE",
+                    "ZIP_CODE"
+                ],
+                "properties": {
+                    "BRANCH_ID": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "ADDRESS": {
+                        "type": "string",
+                        "example": "3882 Main St."
+                    },
+                    "CITY": {
+                        "type": "string",
+                        "example": "Waltham"
+                    },
+                    "NAME": {
+                        "type": "string",
+                        "example": "Headquarters"
+                    },
+                    "STATE": {
+                        "type": "string",
+                        "example": "MA"
+                    },
+                    "ZIP_CODE": {
+                        "type": "string",
+                        "example": "02451"
+                    }
+                },
+                "type": "object"
+            },
+            "Department": {
+                "required": [
+                    "DEPARTMENT_ID",
+                    "NAME"
+                ],
+                "properties": {
+                    "DEPARTMENT_ID": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "NAME": {
+                        "type": "string",
+                        "example": "Human Resources"
+                    }
+                },
+                "type": "object"
+            },
+            "Officer": {
+                "required": [
+                    "OFFICER_ID",
+                    "FIRST_NAME",
+                    "LAST_NAME",
+                    "START_DATE",
+                    "TITLE"
+                ],
+                "properties": {
+                    "OFFICER_ID": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "FIRST_NAME": {
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "LAST_NAME": {
+                        "type": "string",
+                        "example": "Doe"
+                    },
+                    "START_DATE": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-01-01"
+                    },
+                    "END_DATE": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-01-01",
+                        "nullable": true
+                    },
+                    "TITLE": {
+                        "type": "string",
+                        "example": "Manager"
+                    },
+                    "CUST_ID": {
+                        "type": "integer",
+                        "example": 100,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "name": "Authorization",
+                "in": "header",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Branch",
+            "description": "Branch"
+        },
+        {
+            "name": "Department",
+            "description": "Department"
+        },
+        {
+            "name": "Officer",
+            "description": "Officer"
+        }
+    ]
+}
